@@ -35,11 +35,24 @@ namespace IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.IsHttps || env.IsDevelopment())
+                {
+                    await next();
+                }
+                else
+                {
+                    var httpsUrl = "https://" + context.Request.Host + context.Request.Path;
+                    context.Response.Redirect(httpsUrl);
+                }
+            });
             app.UseIdentityServer();
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
             
+
         }
     }
 }
