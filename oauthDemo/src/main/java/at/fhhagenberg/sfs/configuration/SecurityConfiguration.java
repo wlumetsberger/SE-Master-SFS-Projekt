@@ -1,5 +1,6 @@
 package at.fhhagenberg.sfs.configuration;
 
+import at.fhhagenberg.sfs.model.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
@@ -22,6 +23,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.filter.CompositeFilter;
 
 import javax.servlet.Filter;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,5 +105,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     public ResourceServerProperties identityserverResource() {
         return new ResourceServerProperties();
     }
-
 }
