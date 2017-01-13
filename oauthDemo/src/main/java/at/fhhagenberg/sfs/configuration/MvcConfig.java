@@ -1,5 +1,8 @@
 package at.fhhagenberg.sfs.configuration;
 
+import at.fhhagenberg.sfs.OauthDemoApplication;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -13,5 +16,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("landing");
         registry.addViewController("/landing").setViewName("landing");
+        registry.addViewController("/home").setViewName("home");
+        registry.addViewController("/admin/create").setViewName("create");
     }
 }

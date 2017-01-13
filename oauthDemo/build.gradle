@@ -15,6 +15,13 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
+idea {
+	module {
+		inheritOutputDirs = false
+		outputDir = file("$buildDir/classes/main/")
+	}
+}
+
 jar {
 	baseName = 'oauthDemo'
 	version = '0.0.1-SNAPSHOT'

@@ -1,63 +1,31 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <!-- sample page works, create correct ones with templates http://www.thymeleaf.org/doc/articles/layouts.html -->
-<head>
-
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
-
-    <title>OAuth2Demo</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-
-    <!-- MetisMenu CSS -->
-    <link href="/vendor/metisMenu/metisMenu.min.css" rel="stylesheet"/>
-
-    <!-- Custom CSS -->
-    <link href="/dist/css/sb-admin-2.css" rel="stylesheet"/>
-
-    <!-- Custom Fonts -->
-    <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-
-</head>
-
+<head th:include="fragments/main::header"></head>
 <body>
 
-<div class="container">
-
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <form th:action="@{/login/facebook}" role="form" method="get">
-                <input type="submit" value="Login with Facebook" class="btn btn-lg btn-primary btn-block"/>
-            </form>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <form th:action="@{/login/identityserver}" role="form" method="get">
-                <input type="submit" value="Login with identity server" class="btn btn-lg btn-primary btn-block"/>
-            </form>
+<div id="wrapper">
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <nav th:include="fragments/main::navigation"></nav>
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <form th:action="@{/login/facebook}" role="form" method="get">
+                        <input type="submit" value="Login with Facebook" class="btn btn-lg btn-primary btn-block"/>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <form th:action="@{/login/identityserver}" role="form" method="get">
+                        <input type="submit" value="Login with identity server" class="btn btn-lg btn-primary btn-block"/>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<!-- jQuery -->
-<script src="/vendor/jquery/jquery.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="/vendor/bootstrap/js/bootstrap.js"></script>
-
-<!-- Metis Menu Plugin JavaScript -->
-<script src="/vendor/metisMenu/metisMenu.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="/dist/js/sb-admin-2.js"></script>
-
+<div th:include="fragments/main::jsSource"></div>
 </body>
 
 </html>

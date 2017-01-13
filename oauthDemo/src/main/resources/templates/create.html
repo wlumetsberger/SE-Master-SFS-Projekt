@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/main::header"></head>
+
+<body>
+<div id="wrapper">
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <nav th:include="fragments/main::navigation"></nav>
+            <form th:action="@{/admin/create}" th:role="form" th:method="post" th:object="${model}">
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">Name</label>
+                    <div class="col-10">
+                        <input th:field="*{name}" class="form-control" type="text" placeholder="projectname" id="example-text-input" th:required="true"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-10 centered">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:include="fragments/main::jsSource"></div>
+</body>
+</html>
