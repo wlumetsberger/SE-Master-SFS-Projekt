@@ -14,8 +14,19 @@ internal class Users
                 Username = "test",
                 Password = "test",
                 Claims = new List<Claim> {
-                    new Claim(JwtClaimTypes.Name, "roman lum"),
+                    new Claim(JwtClaimTypes.Name, "test user"),
                     new Claim(JwtClaimTypes.Email, "test@sfs.com"),
+                    new Claim(JwtClaimTypes.Role, "user"),
+                }
+            },
+            new TestUser {
+                SubjectId = "5BE86359-073C-434B-AD2D-A3932222DABF",
+                ProviderSubjectId="adminid",
+                Username = "admin",
+                Password = "admin",
+                Claims = new List<Claim> {
+                    new Claim(JwtClaimTypes.Name, "admin user"),
+                    new Claim(JwtClaimTypes.Email, "admin@sfs.com"),
                     new Claim(JwtClaimTypes.Role, "admin"),
                 }
             }
