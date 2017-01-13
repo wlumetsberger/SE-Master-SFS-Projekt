@@ -10,11 +10,13 @@ internal class Users
         return new List<TestUser> {
             new TestUser {
                 SubjectId = "5BE86359-073C-434B-AD2D-A3932222DABE",
+                ProviderSubjectId="testid",
                 Username = "test",
                 Password = "test",
                 Claims = new List<Claim> {
+                    new Claim(JwtClaimTypes.Name, "roman lum"),
                     new Claim(JwtClaimTypes.Email, "test@sfs.com"),
-                    new Claim(JwtClaimTypes.Role, "admin")
+                    new Claim(JwtClaimTypes.Role, "admin"),
                 }
             }
         };
