@@ -1,6 +1,7 @@
 package at.fhhagenberg.sfs.controller;
 
 import at.fhhagenberg.sfs.model.ProjektModel;
+import at.fhhagenberg.sfs.model.UserContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -20,6 +21,7 @@ public class AdminController {
                        final Model model) {
 
         model.addAttribute("model", new ProjektModel());
+        model.addAttribute("userCtx", UserContext.createUserCtxForPrincipal(p));
 
         return "create";
     }

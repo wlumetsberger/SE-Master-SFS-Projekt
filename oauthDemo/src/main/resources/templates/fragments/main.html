@@ -27,15 +27,20 @@
 </head>
 
 <body>
-<nav class="navbar navbar-default" th:fragment="navigation">
+<nav class="navbar navbar-inverse" th:fragment="navigation">
     <div class="container-fluid">
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li><a th:href="@{/home}">Home</a></li>
-                <li><a th:href="@{/admin/create}">Admin</a></li>
-                <!-- <li><a th:href="@{/admin/list}">List</a></li> -->
+                <li>
+                    <a th:href="@{/admin/create}">Create</a>
+                </li>
+                <li><a th:href="@{/admin/list}">List</a></li>
             </ul>
+            <form th:action="@{/logout}" method="post" th:if="${userCtx} != null and ${userCtx.logged}">
+                <input class="btn btn-nav" type="submit" value="Logout"/>
+            </form>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
