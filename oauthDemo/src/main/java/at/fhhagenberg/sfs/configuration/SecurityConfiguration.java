@@ -19,8 +19,11 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.filter.CompositeFilter;
 
 import javax.servlet.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wolfgang on 09.01.2017.
@@ -52,6 +55,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     }
 
     private Filter ssoFilter() {
+
+        CompositeFilter filter = new CompositeFilter();
+        List<Filter> filters = new ArrayList<>();
+
         OAuth2ClientAuthenticationProcessingFilter facebookFilter = new OAuth2ClientAuthenticationProcessingFilter(
                 "/login/facebook");
         OAuth2RestTemplate facebookTemplate = new OAuth2RestTemplate(facebook(), oauth2ClientContext);
@@ -59,7 +66,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
         facebookFilter.setTokenServices(
                 new UserInfoTokenServices(facebookResource().getUserInfoUri(), facebook().getClientId()));
         facebookFilter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/home"));
-        return facebookFilter;
+        filters.add(facebookFilter);
+
+        //identity server login
+        OAuth2ClientAuthenticationProcessingFilter identityServerFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/identityserver");
+        OAuth2RestTemplate identityServerTemplate = new OAuth2RestTemplate(identityserver(), oauth2ClientContext);
+        identityServerFilter.setRestTemplate(identityServerTemplate);
+        identityServerFilter.setTokenServices(new UserInfoTokenServices(identityserverResource().getUserInfoUri(), identityserver().getClientId()));
+        identityServerFilter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/home"));
+        filters.add(identityServerFilter);
+
+        filter.setFilters(filters);
+        return filter;
     }
 
     @Bean
@@ -74,5 +92,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
         return new ResourceServerProperties();
     }
 
+    @Bean
+    @ConfigurationProperties("identityserver.client")
+    public AuthorizationCodeResourceDetails identityserver() {
+        return new AuthorizationCodeResourceDetails();
+    }
+
+    @Bean
+    @ConfigurationProperties("identityserver.resource")
+    public ResourceServerProperties identityserverResource() {
+        return new ResourceServerProperties();
+    }
 
 }
