@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- sample page works, create correct ones with templates http://www.thymeleaf.org/doc/articles/layouts.html -->
+<head>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <title>OAuth2Demo</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- MetisMenu CSS -->
+    <link href="/vendor/metisMenu/metisMenu.min.css" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link href="/dist/css/sb-admin-2.css" rel="stylesheet"/>
+
+    <link href="/vendor/morrisjs/morris.css" rel="stylesheet"/>
+
+    <!-- Custom Fonts -->
+    <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        test
+                    </h1>
+                </div>
+                <div class="col-sm-8">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <i class="fa fa-clock fa-fw"></i> You are Logged in!
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>User-Name:</label>
+                                <output class="form-control" th:text="${UserName}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form th:action="@{/logout}" method="post">
+                        <i class="fa fa-sign-out fa-fw"></i> <input class="btn-link" type="submit" value="Logout"/>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

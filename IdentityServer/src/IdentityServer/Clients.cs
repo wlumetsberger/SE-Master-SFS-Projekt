@@ -8,18 +8,19 @@ internal class Clients
     {
         return new List<Client> {
             new Client {
-                ClientId = "sfsClient",
+                ClientId = "sfsclient",
                 ClientName = "SFS Application",
-                AllowedGrantTypes = GrantTypes.Implicit,
+                AllowedGrantTypes = GrantTypes.Code,
+                ClientSecrets = new List<Secret>{ new Secret(value: "sfsclient".Sha256()) },
                 AllowedScopes = new List<string>
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,
-                    "role",
+                    "role"
                 },
-                RedirectUris = new List<string> {"https://localhost:44330/signin-oidc"},
-                PostLogoutRedirectUris = new List<string> {"https://localhost:44330"}
+                RedirectUris = new List<string> {"http://localhost:8080/login/identityserver"},
+                PostLogoutRedirectUris = new List<string> {"https://localhost:8080"}
             }
         };
     }

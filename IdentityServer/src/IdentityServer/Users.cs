@@ -16,6 +16,8 @@ internal class Users
                     new Claim(JwtClaimTypes.Name, "test user"),
                     new Claim(JwtClaimTypes.Email, "test@sfs.com"),
                     new Claim(JwtClaimTypes.Role, "user"),
+              //      new Claim("authority", "user"),
+                    
                 }
             },
             new TestUser {
@@ -27,6 +29,7 @@ internal class Users
                     new Claim(JwtClaimTypes.Name, "admin user"),
                     new Claim(JwtClaimTypes.Email, "admin@sfs.com"),
                     new Claim(JwtClaimTypes.Role, "admin"),
+                //    new Claim("authority", "admin"),
                 }
             }
         };
