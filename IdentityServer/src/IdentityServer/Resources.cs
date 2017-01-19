@@ -11,7 +11,7 @@ internal class Resources
             new IdentityResources.Email(),
             new IdentityResource {
                 Name = "role",
-                UserClaims = new List<string> {"role"}
+                UserClaims = new List<string> {"authorities"}
             }
         };
     }

@@ -15,8 +15,8 @@ internal class Users
                 Claims = new List<Claim> {
                     new Claim(JwtClaimTypes.Name, "test user"),
                     new Claim(JwtClaimTypes.Email, "test@sfs.com"),
-                    new Claim(JwtClaimTypes.Role, "user"),
-              //      new Claim("authority", "user"),
+                    //Spring security role
+                    new Claim("authorities", "ROLE_USER"),
                     
                 }
             },
@@ -28,8 +28,8 @@ internal class Users
                 Claims = new List<Claim> {
                     new Claim(JwtClaimTypes.Name, "admin user"),
                     new Claim(JwtClaimTypes.Email, "admin@sfs.com"),
-                    new Claim(JwtClaimTypes.Role, "admin"),
-                //    new Claim("authority", "admin"),
+                    //Spring security role
+                    new Claim("authorities", "ROLE_ADMIN"),
                 }
             }
         };
