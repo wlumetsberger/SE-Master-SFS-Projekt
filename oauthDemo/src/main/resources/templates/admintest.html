@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- sample page works, create correct ones with templates http://www.thymeleaf.org/doc/articles/layouts.html -->
+<head th:include="fragments/main::header"></head>
+
+<body>
+
+<div id="wrapper">
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <nav th:include="fragments/main::navigation"></nav>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        Übersicht
+                    </h1>
+                </div>
+                <div class="col-sm-8">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <i class="fa fa-clock fa-fw"></i> You are Logged in!
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>data:</label>
+                                <output class="form-control" th:text="${data}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form th:action="@{/logout}" method="post">
+                        <i class="fa fa-sign-out fa-fw"></i> <input class="btn-link" type="submit" value="Logout"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="fragments/main::jsSource"></div>
+</body>
+</html>
