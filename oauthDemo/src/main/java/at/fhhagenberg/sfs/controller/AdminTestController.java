@@ -19,6 +19,6 @@ public class AdminTestController {
        model.clear();
        model.addAttribute("data",auth);
 
-       return "/admintest";
+       return "admintest";
     }
 }

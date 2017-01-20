@@ -10,6 +10,8 @@ internal class Resources
             new IdentityResources.Profile(),
             new IdentityResources.Email(),
             new IdentityResource {
+                DisplayName = "Role",
+                Description = "Role of the user",
                 Name = "role",
                 UserClaims = new List<string> {"authorities"}
             }

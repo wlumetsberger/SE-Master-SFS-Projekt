@@ -13,6 +13,14 @@ namespace IdentityServer
 {
     public class Startup
     {
+
+        public IHostingEnvironment Env { get; set; }
+
+        public Startup(IHostingEnvironment env)
+        {
+            Env = env;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -20,7 +28,7 @@ namespace IdentityServer
             services.AddMvc();
 
             services.AddIdentityServer()
-            .AddInMemoryClients(Clients.Get())
+            .AddInMemoryClients(Clients.Get(Env.IsDevelopment()))
             .AddInMemoryIdentityResources(Resources.GetIdentityResources())
             .AddTestUsers(Users.Get())
             .AddTemporarySigningCredential();

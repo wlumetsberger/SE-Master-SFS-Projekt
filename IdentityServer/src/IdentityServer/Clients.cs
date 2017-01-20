@@ -4,7 +4,17 @@ using System.Collections.Generic;
 
 internal class Clients
 {
-    public static IEnumerable<Client> Get()
+    public static string GetBaseUri(bool isDevelopment)
+    {
+        if (isDevelopment)
+        {
+            return "http://localhost:8080";
+        }
+
+        return "https://sfsoauthdemo.azurewebsites.net";
+    }
+    
+    public static IEnumerable<Client> Get(bool isDevelopment)
     {
         return new List<Client> {
             new Client {
@@ -19,8 +29,8 @@ internal class Clients
                     IdentityServerConstants.StandardScopes.Email,
                     "role"
                 },
-                RedirectUris = new List<string> {"http://localhost:8080/login/identityserver"},
-                PostLogoutRedirectUris = new List<string> {"https://localhost:8080"}
+                RedirectUris = new List<string> {GetBaseUri(isDevelopment)+"/login/identityserver"},
+                PostLogoutRedirectUris = new List<string> {GetBaseUri(isDevelopment)}
             }
         };
     }

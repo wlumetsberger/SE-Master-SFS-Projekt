@@ -18,6 +18,6 @@ public class HomeController {
        model.clear();
        model.addAttribute("userCtx", UserContext.createUserCtxForPrincipal(p));
 
-       return "/home";
+       return "home";
     }
 }
