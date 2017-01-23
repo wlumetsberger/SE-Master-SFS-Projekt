@@ -1,0 +1,157 @@
+\section{OAuth Spring Boot}
+Es wurde eine Spring-Boot Anwendung implementiert, die \emph{OAuth} Authentifizierungen über \emph{Facebook} und über einen eigens implementierten \emph{Authorization Server} in \emph{.Net  (Identity Foundation)}. Es werden auch als \emph{Open Source} \emph{Authorization Server} angeboten wie z.B. \href{http://www.keycloak.org/}{\emph{Keycloak}} von der \emph{Apache Software Foundation}, der in Java und AngularJS implementiert ist. 
+\newline
+\newline
+Die \emph{Spring Security} kann vollständig transparent von der eigentlichen Anwendung konfiguriert werden. Die geschützten Ressourcen können gebündelt in einer Konfigurationsklasse definiert werden, ohne dass die Implementierungen der eigentlichen Anwendung geändert müssen. Als Benutzerrepräsentation sollte eine eigene Klasse implementiert werden die \emph{Security}-spezifische Implementierung von der Anwendung abstrahiert, damit kann die gewählte Authentifizierungsmethode in Hintergrund ausgetauscht werden.
+
+\begin{code}
+	\caption{Spring application.properties}
+	\propertiesFile{../oauthDemo/src/main/resources/application.properties}
+	\label{source:epidemiology-logistic}
+\end{code}
+\ \newline
+\newline
+In der Datei \emph{application.properties} werden die verwendeten \emph{OAuth Authentication Server} konfiguriert, jedoch nicht die geschützten Ressourcen, diese werden in einer Spring Konfigurationsklasse definiert.
+\newpage
+
+Diese Methode ist Teil der programmatischen Konfiguration der \emph{Spring Security} der Klasse \emph{SecurityConfiguration} und konfiguriert die \emph{HttpSecurity} Instanz.
+\begin{minted}{java}
+/**
+* Configure the htt security for the spring application
+*
+* @param http the HttpSecurity object to configure
+* @throws Exception if an error occurs during the configuration
+*/
+@Override
+protected void configure(HttpSecurity http) throws Exception {
+	// Enable OAuth for all resources
+	http.antMatcher("/**").authorizeRequests()
+	// Exclude open resources such as css, js and open views
+	.antMatchers("/", "/dist/**", "/vendor/**", "/login**", "/landing")
+		.permitAll()
+	// protect all admin views for role 'ADMIn' only
+	.antMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated()
+	// Redirect to login page if error
+	.and().exceptionHandling()
+		.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
+	// Redirect to login page if successfully logged out
+	.and().logout().logoutSuccessUrl("/").permitAll()
+	// Enable cross site request forgery support
+	.and().csrf().csrfTokenRepository(CookieCsrfTokenRepository
+		.withHttpOnlyFalse())
+	// Add the OAuth filter before the BasicAuthentication filter
+	.and().addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
+}
+\end{minted}
+\ \newline
+Mit dieser Methode wird der \emph{OAuth-Servlet-Filter} registriert und wird als erster Filter aktiviert \emph{(ordinal=-100)}.
+\begin{minted}{java}
+    /**
+* Register OAuth filter
+*
+* @param filter the filter to append
+* @return the filter registration
+*/
+@Bean
+public FilterRegistrationBean 
+	oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
+	FilterRegistrationBean registration = new FilterRegistrationBean();
+	registration.setFilter(filter);
+	registration.setOrder(-100);
+	return registration;
+}
+\end{minted}
+\ \newpage
+
+Die folgende Methode konfiguriert einen \emph{CompositeFilter}, der mehrere Filter Instanzen verwaltet und als ein Filter registriert wird. In unserer Implementierung werden die OAuth-Authentifizierung über \emph{Facebook} und unseren \emph{Identity Server} unterstützt.
+\begin{minted}{java}
+   /**
+* Helper method for configuring the BasicAuthentication filter instance.
+*
+* @return the configured filter instance
+*/
+private Filter ssoFilter() {
+	CompositeFilter filter = new CompositeFilter();
+	List<Filter> filters = new ArrayList<>(2);
+	
+	// Configure the OAuth filter for facebook authentication
+	OAuth2ClientAuthenticationProcessingFilter facebookFilter = 
+		new OAuth2ClientAuthenticationProcessingFilter("/login/facebook");
+	OAuth2RestTemplate facebookTemplate = 
+		new OAuth2RestTemplate(facebook(), oauth2ClientContext);
+	facebookFilter.setRestTemplate(facebookTemplate);
+	facebookFilter.setTokenServices(
+		new UserInfoTokenServices(facebookResource().getUserInfoUri(),
+					  facebook().getClientId()));
+	facebookFilter.setAuthenticationSuccessHandler(
+		new SimpleUrlAuthenticationSuccessHandler("/home"));
+	filters.add(facebookFilter);
+	
+	// Configure the OAuth filter for identity server authentication
+	OAuth2ClientAuthenticationProcessingFilter identityServerFilter = 
+		new OAuth2ClientAuthenticationProcessingFilter("/login/identityserver");
+	OAuth2RestTemplate identityServerTemplate = 
+		new OAuth2RestTemplate(identityserver(), oauth2ClientContext);
+	identityServerFilter.setRestTemplate(identityServerTemplate);
+	identityServerFilter.setTokenServices(
+		new UserInfoTokenServices(identityserverResource().getUserInfoUri(), 
+					  identityserver().getClientId()));
+	identityServerFilter.setAuthenticationSuccessHandler(
+		new SimpleUrlAuthenticationSuccessHandler("/home"));
+	filters.add(identityServerFilter);
+	
+	// Set configured filters on the composite filter
+	filter.setFilters(filters);
+	
+	return filter;
+}
+\end{minted}
+\ \newpage
+
+Die folgenden Methoden erstellen die Java-Repräsentation der in der \emph{application.properties} definierten Properties \emph{facebook.*} und \emph{identityserver.*}. In diese Objekte werden die gesetzten \emph{Properties} in der\emph{application.properties} sowie die programmatischen Konfigurationen zusammengeführt.
+\begin{minted}{java}
+    /**
+* @return the configured facebook client
+*/
+@Bean
+@ConfigurationProperties("facebook.client")
+public AuthorizationCodeResourceDetails facebook() {
+	return new AuthorizationCodeResourceDetails();
+}
+
+/**
+* @return the configured facebook resource
+*/
+@Bean
+@ConfigurationProperties("facebook.resource")
+public ResourceServerProperties facebookResource() {
+	return new ResourceServerProperties();
+}
+
+/**
+* @return the configured identity server client
+*/
+@Bean
+@ConfigurationProperties("identityserver.client")
+public AuthorizationCodeResourceDetails identityserver() {
+	return new AuthorizationCodeResourceDetails();
+}
+
+/**
+* @return the configured identity server resource
+*/
+@Bean
+@ConfigurationProperties("identityserver.resource")
+public ResourceServerProperties identityserverResource() {
+	return new ResourceServerProperties();
+}
+\end{minted}
+\ \newline
+Mit dieser Konfiguration ist die \emph{Security} der implementierten \emph{Spring Boot} Anwendung konfiguriert und die Ressourcen der Anwendung sind gemäß der Konfiguration geschützt.
+
+\ \newpage
+
+
+
+
+

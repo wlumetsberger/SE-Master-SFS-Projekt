@@ -257,3 +257,15 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# Latex files
+*.aux
+*.bak
+*.out
+*.bbl
+*.blg
+*.gz
+*.log
+_minted*
+
+**/classes/*
