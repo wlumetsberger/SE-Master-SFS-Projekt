@@ -3,6 +3,7 @@ package at.fhhagenberg.sfs.controller;
 import at.fhhagenberg.sfs.model.UserContext;
 import at.fhhagenberg.sfs.util.SecurityUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * The base controller which holds the common resources which each controller depends on.
@@ -12,12 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public abstract class AbstractController {
 
-    protected UserContext utx;
-
-    /**
-     * Initialize the UserContext depending on the current security context held authentication.
-     */
-    public AbstractController() {
-        utx = SecurityUtil.createUserCtx(SecurityContextHolder.getContext().getAuthentication());
+    @ModelAttribute("utx")
+    public UserContext getUserContext() {
+        return SecurityUtil.createUserCtx(SecurityContextHolder.getContext().getAuthentication());
     }
 }

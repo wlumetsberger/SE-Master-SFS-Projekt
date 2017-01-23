@@ -16,10 +16,19 @@ import java.security.Principal;
 @Controller
 public class HomeController extends AbstractController {
 
+    /**
+     * Mapping so that we have a UserContext in the landing view as well.
+     *
+     * @return 'landing' view name
+     */
+    @RequestMapping(path = {"/", "/landing"})
+    public String index() {
+        return "landing";
+    }
+
     @RequestMapping("/home")
     public String home(final ModelMap model) {
         model.clear();
-        model.addAttribute("userCtx", utx);
 
         return "home";
     }

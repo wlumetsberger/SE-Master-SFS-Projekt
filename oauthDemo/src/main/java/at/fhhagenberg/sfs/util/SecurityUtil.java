@@ -4,31 +4,45 @@ import at.fhhagenberg.sfs.model.UserContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.security.Principal;
-
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 01/22/17
  */
 public class SecurityUtil {
 
+    /**
+     * Create a UserContext object for the given authentication.
+     *
+     * @param auth the authentication holding the authentication information
+     * @return the create user context object
+     */
     public static final UserContext createUserCtx(final Authentication auth) {
-        if ((auth == null) || (!auth.isAuthenticated())) {
-            return new UserContext(false, UserContext.Role.ANONYMOUS, UserContext.Role.ANONYMOUS.name());
-        }
+        // If not authentication ia available the user is always considered to be anonymous
+        UserContext.Role role = UserContext.Role.ANONYMOUS;
+        String name = UserContext.Role.ANONYMOUS.name();
 
-        UserContext.Role role = UserContext.Role.USER;
-        for (GrantedAuthority ga : auth.getAuthorities()) {
-            switch (ga.getAuthority()) {
-                case "ADMIN":
-                    role = UserContext.Role.ADMIN;
+        if (auth != null) {
+            name = ((String) auth.getPrincipal());
+
+            for (GrantedAuthority ga : auth.getAuthorities()) {
+                switch (ga.getAuthority()) {
+                    case "ROLE_ADMIN":
+                        role = UserContext.Role.ADMIN;
+                        break;
+                    // Maybe user is also admin which will give him more rights than user, so keep on.
+                    case "ROLE_USER":
+                        role = UserContext.Role.USER;
+                        break;
+                    default:
+                        role = UserContext.Role.ANONYMOUS;
+                }
+                // Cannot have more privileges, therefore can break here
+                if (UserContext.Role.ADMIN.equals(role)) {
                     break;
-                // Maybe user is also admin which will give him more rights than user, so keep on.
-                case "USER":
-                    role = UserContext.Role.ANONYMOUS;
+                }
             }
         }
 
-        return new UserContext(auth.isAuthenticated(), role, auth.getName());
+        return new UserContext(!UserContext.Role.ANONYMOUS.equals(role), role, name);
     }
 }

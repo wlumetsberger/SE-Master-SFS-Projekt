@@ -8,8 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.security.Principal;
-
 /**
  * @author Thomas Herzog<S1610454013@students.fh-hagtenberg.at>
  */
@@ -23,7 +21,6 @@ public class AdminController extends AbstractController {
     public String home(final Model model) {
 
         model.addAttribute("model", new ProjectModel());
-        model.addAttribute("userCtx", utx);
 
         return "create";
     }

@@ -38,7 +38,7 @@
                 </li>
                 <li><a th:href="@{/admin/list}">List</a></li>
             </ul>
-            <form th:action="@{/logout}" method="post" th:if="${userCtx} != null and ${userCtx.logged}">
+            <form th:action="@{/logout}" method="post" th:if="${utx.logged}">
                 <input class="btn btn-nav" type="submit" value="Logout"/>
             </form>
         </div><!-- /.navbar-collapse -->

@@ -1,13 +1,16 @@
 package at.fhhagenberg.sfs.model;
 
-import java.security.Principal;
-
 /**
+ * An object of this class represents a user interacting with the application.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 01/13/17
  */
 public class UserContext {
 
+    /**
+     * Defines the supported roles
+     */
     public enum Role {
         ADMIN,
         USER,
