@@ -26,15 +26,7 @@ public class UserContext {
         this.name = name;
     }
 
-    public static final UserContext createUserCtxForPrincipal(final Principal p) {
-        if (p == null) {
-            return new UserContext(false, Role.ANONYMOUS, Role.ANONYMOUS.name());
-        }
-        // TODO: Role must be set correctly, but Principal has no role information
-        return new UserContext(true, Role.USER, p.getName());
-    }
-
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return (isLogged()) && (Role.ADMIN.equals(role));
     }
 
