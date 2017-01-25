@@ -51,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             // Exclude open resources such as css, js and open views
             .antMatchers("/", "/dist/**", "/vendor/**", "/login**", "/landing").permitAll()
             // protect all admin views for role 'ADMIn' only
-            .antMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated()
+            .antMatchers("/admin/**").hasRole("ANONYMOUS").anyRequest().authenticated()
             // Redirect to login page if not logged and tried to access protected resource
             .and().exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
             // Redirect to login page if successfully logged out
