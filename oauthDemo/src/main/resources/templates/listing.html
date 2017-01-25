@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/main::header"></head>
+
+<body>
+<div id="wrapper">
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <nav th:include="fragments/main::navigation"></nav>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projects}">
+                    <td th:text="${project.name}"></td>
+                    <td th:text="${project.name}"></td>
+                    <td>
+                        <form th:method="post" th:action="@{/admin/delete}" th:if="${utx.admin}">
+                            <input type="hidden" id="name" th:name="name" th:value="${project.name}"/>
+                            <button type="submit" name="submit" class="btn btn-primary">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div th:include="fragments/main::jsSource"></div>
+</body>
+</html>

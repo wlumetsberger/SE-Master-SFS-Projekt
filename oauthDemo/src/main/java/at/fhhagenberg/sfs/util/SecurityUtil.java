@@ -17,7 +17,7 @@ public class SecurityUtil {
      * @return the create user context object
      */
     public static final UserContext createUserCtx(final Authentication auth) {
-        // If not authentication ia available the user is always considered to be anonymous
+        // If not authentication is available the user is always considered to be anonymous
         UserContext.Role role = UserContext.Role.ANONYMOUS;
         String name = UserContext.Role.ANONYMOUS.name();
 
@@ -29,7 +29,6 @@ public class SecurityUtil {
                     case "ROLE_ADMIN":
                         role = UserContext.Role.ADMIN;
                         break;
-                    // Maybe user is also admin which will give him more rights than user, so keep on.
                     case "ROLE_USER":
                         role = UserContext.Role.USER;
                         break;

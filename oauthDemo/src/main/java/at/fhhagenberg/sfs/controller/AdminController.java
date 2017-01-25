@@ -2,13 +2,13 @@ package at.fhhagenberg.sfs.controller;
 
 import at.fhhagenberg.sfs.SessionStorage;
 import at.fhhagenberg.sfs.model.ProjectModel;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -28,16 +28,33 @@ public class AdminController extends AbstractController {
 
         return "create";
     }
+
+    @RequestMapping(value = "/admin/list", method = RequestMethod.GET)
+    public String list(final Model model) {
+
+        model.addAttribute("model", new ProjectModel());
+
+        return "listing";
+    }
+
     @RequestMapping(value = "/admin/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute ProjectModel projectModel, final Model model) {
+    public String create(@ModelAttribute ProjectModel projectModel,
+                         final Model model) {
 
         model.addAttribute("model", projectModel);
 
         return "create";
     }
 
+    @RequestMapping(value = "/admin/delete", method = RequestMethod.POST)
+    public String delete(@RequestParam("name") String name) {
+        storage.remove(name);
+
+        return "listing";
+    }
+
     @ModelAttribute("projects")
-    public List<ProjectModel> getProjectModels(){
+    public List<ProjectModel> getProjectModels() {
         return storage.getData();
     }
 }
