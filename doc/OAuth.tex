@@ -29,8 +29,12 @@ protected void configure(HttpSecurity http) throws Exception {
 	// Exclude open resources such as css, js and open views
 	.antMatchers("/", "/dist/**", "/vendor/**", "/login**", "/landing")
 		.permitAll()
-	// protect all admin views for role 'ADMIn' only
-	.antMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated()
+	// protect listing view for roles 'ADMIN, USER' only
+	.antMatchers("/admin/list").hasAnyRole("ADMIN", "USER")
+		.anyRequest().authenticated()
+	// protect all admin views for role 'ADMIN' only
+	.antMatchers("/admin/create", "/admin/delete")
+		.hasRole("ADMIN").anyRequest().authenticated()
 	// Redirect to login page if error
 	.and().exceptionHandling()
 		.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
@@ -108,7 +112,7 @@ private Filter ssoFilter() {
 \end{minted}
 \ \newpage
 
-Die folgenden Methoden erstellen die Java-Repräsentation der in der \emph{application.properties} definierten Properties \emph{facebook.*} und \emph{identityserver.*}. In diese Objekte werden die gesetzten \emph{Properties} in der\emph{application.properties} sowie die programmatischen Konfigurationen zusammengeführt.
+Die folgenden Methoden erstellen die Java-Repräsentation der in der \emph{application.properties} definierten Properties \emph{facebook.*} und \emph{identityserver.*}. In diese Objekte werden die gesetzten \emph{Properties} der \emph{application.properties} Datei sowie die programmatischen Konfigurationen zusammengeführt.
 \begin{minted}{java}
     /**
 * @return the configured facebook client
@@ -148,10 +152,148 @@ public ResourceServerProperties identityserverResource() {
 \end{minted}
 \ \newline
 Mit dieser Konfiguration ist die \emph{Security} der implementierten \emph{Spring Boot} Anwendung konfiguriert und die Ressourcen der Anwendung sind gemäß der Konfiguration geschützt.
+\newpage
 
+Die Klasse \emph{UserContext} repräsentiert einen Benutzer, der mit der Anwendung interagiert. Dadurch werden die \emph{Spring Security} Spezifika von der Anwendung abstrahiert. Die \emph{Views} und die \emph{Controller} arbeiten mit dem \emph{UserContext}-Objekt und nicht mit dem \emph{Authentication} oder \emph{Principal} Objekten, die mehr Informationen zur Verfügung stellen, als meiner Meinung nach für die Anwendung zugänglich sein sollte.
+\newline\newline
+Die Klasse \emph{UserContext} könnte noch zusätzlich benutzer- und anwendungsspezifische Informationen enthalten, die unabhängig von der \emph{Security} sind.  
+
+\begin{minted}{java}
+/**
+* An object of this class represents a user interacting with the application.
+*
+* @author Thomas Herzog <t.herzog@curecomp.com>
+* @since 01/13/17
+*/
+public class UserContext {
+
+	public enum Role {
+		ADMIN,
+		USER,
+		ANONYMOUS;
+	}
+	
+	private final boolean logged;
+	private final Role role;
+	private final String name;
+	
+	public UserContext(boolean logged,
+			  Role role,
+			  String name) {
+		this.logged = logged;
+		this.role = role;
+		this.name = name;
+	}
+	
+	public boolean isAdmin() {
+		return (isLogged()) && (Role.ADMIN.equals(role));
+	}
+	
+	public boolean isLogged() {
+		return logged;
+	}
+	
+	public Role getRole() {
+		return role;
+	}
+	
+	public String getName() {
+		return name;
+	}
+}
+\end{minted}
+
+Die Klasse \emph{SecurityUtil} ist für die Erstellung des \emph{UserContext} aus einem \emph{Authentication} Objekt verantwortlich. Sollte ein Benutzer nicht eingeloggt sein, so wird er als anonymer Benutzer angesehen. Sollte ein Benutzer mehrere Rollen zugewiesen haben, dann wird die Rolle mit den höchsten Privilegien bevorzugt.
+
+\begin{minted}{java}
+/**
+* @author Thomas Herzog <t.herzog@curecomp.com>
+* @since 01/22/17
+*/
+public class SecurityUtil {
+
+/**
+* Create a UserContext object for the given authentication.
+*
+* @param auth the authentication holding the authentication information
+* @return the create user context object
+*/
+public static final UserContext createUserCtx(final Authentication auth) {
+	// If not authentication is available 
+	// then the user is always considered to be anonymous
+	UserContext.Role role = UserContext.Role.ANONYMOUS;
+	String name = UserContext.Role.ANONYMOUS.name();
+	
+	if (auth != null) {
+		name = ((String) auth.getPrincipal());
+		
+		for (GrantedAuthority ga : auth.getAuthorities()) {
+			switch (ga.getAuthority()) {
+				case "ROLE_ADMIN":
+					role = UserContext.Role.ADMIN;
+					break;
+				case "ROLE_USER":
+					role = UserContext.Role.USER;
+					break;
+				default:
+					role = UserContext.Role.ANONYMOUS;
+				}
+			// Cannot have more privileges, therefore can break here
+			if (UserContext.Role.ADMIN.equals(role)) {
+				break;
+			}
+		}
+	}
+	
+	return new UserContext(!UserContext.Role.ANONYMOUS.equals(role), role, name);
+	}
+}
+\end{minted}
 \ \newpage
 
+Die folgende abstrakte Klasse repräsentiert die Basisklasse aller \emph{Controller} und stellt eine \emph{@ModelAttribute} annotierte Methode zur Verfügung, die den \emph{UserContext} für die \emph{Views} bereitstellt, der aus dem \emph{Authentication}-Objekt erstellt wird. Somit können alle \emph{Views} denselben Namen verwenden und es gibt nur eine Stelle wo der \emph{UserContext} erstellt wird. Mit Diesem Ansatz bleiben die \emph{Controller} befreit von \emph{Security}-spezifischen \emph{Code}.
 
+\begin{minted}{java}
+/**
+* The base controller which holds the common resources which each controller depends on.
+*
+* @author Thomas Herzog <t.herzog@curecomp.com>
+* @since 01/23/17
+*/
+public abstract class AbstractController {
+	
+	@ModelAttribute("utx")
+	public UserContext getUserContext() {
+		return SecurityUtil.createUserCtx(
+			SecurityContextHolder.getContext().getAuthentication());
+	}
+} 
+\end{minted}
+\ \newline
+
+Die folgende Auszüge aus den \emph{HTML}-Seiten zeigt die Verwendung des \emph{UserContext}.
+\newline
+\newline
+Der \emph{Logoutbutton} ist nur sichtbar wenn ein Benutzer eingeloggt ist (ADMIN, USER).
+\begin{minted}{html}
+...
+<form th:action="@{/logout}" method="post" th:if="${utx.logged}">
+	<input class="btn btn-nav" type="submit" value="Logout"/>
+</form>
+...
+\end{minted}
+\ \newline
+Der \emph{Delete Button} ist nur sichtbar wenn ein Benutzer eingeloggt ist und der Rolle AMIN zugewiesen ist.
+\begin{minted}{html}
+...
+<form th:method="post" th:action="@{/admin/delete}" th:if="${utx.admin}">
+	<input type="hidden" id="name" th:name="name" th:value="${project.name}"/>
+	<button type="submit" name="submit" class="btn btn-primary">Delete</button>
+</form>
+...
+\end{minted}
+\ \newline
+Die \emph{Controller} erfordern keine Modifikation bezüglich der \emph{Security}, da die Konfiguration in der programmatischen Konfiguration der Klasse \emph{SecurityConfiguration} erfolgt und daher die \emph{Controller} abstrahiert von der \emph{Security} sind. 
 
 
 
