@@ -1,26 +1,27 @@
 \section{Beschreibung der Anwendung}
-Die erstellte Beispielanwendung besteht im wesentlichen aus einer Spring-Boot-Webanwendung, welche sowohl Facebook, als auch IdentityServer-4 zur Benutzerverwaltung verwendet. Dabei werden alle Benutzer über Facebook als normale Benutzer behandelt. Benutzer, welche sich über den IdentityServer-4 einloggen, können sowohl Administrator als auch normaler Benutzer sein. 
+Die erstellte Beispielanwendung besteht im Wesentlichen aus einer Spring-Boot-Webanwendung, welche sowohl Facebook als auch IdentityServer-4 zur Benutzerverwaltung verwendet. Dabei werden alle Benutzer über Facebook als normale Benutzer behandelt. Benutzer, die sich über den IdentityServer-4 einloggen, können sowohl Administrator als auch normaler Benutzer sein. 
 
 \section{Facebook Authentication}
-Um Facebook als Provider zu verwenden, muss eine Applikation im Facebook-Developer-Portal\footnote{\url{developers.facebook.com}} angelegt werden. Dadurch bekommt man dann die benötigten Parameter welche dann in der Spring-Boot-Anwendung verwendet werden können.
+Um Facebook als Provider zu verwenden, muss eine Applikation im Facebook-Developer-Portal\footnote{\url{developers.facebook.com}} angelegt werden. Dadurch bekommt man die benötigten Parameter welche dann in der Spring-Boot-Anwendung verwendet werden können.
 
 \section{OAuth-2 Authentication Server}
-Um Benutzerauthentifierung über OAuth durchzuführen, wird ein Authorization Server benötigt, welcher die Benutzerdaten bzw. \emph{Claims} zur Verfügung stellt. In diesem Beispiel wurde die \emph{Open Source} Software \emph{IdentityServer4}\footnote{IdentityServer4 s. \url{https://github.com/IdentityServer/IdentityServer4}} verwendet. 
+Um Benutzerauthentifizierung über OAuth durchzuführen, wird ein Authentication-Server benötigt, welcher die Benutzerdaten bzw. \emph{Claims} zur Verfügung stellt. In diesem Beispiel wurde die \emph{Open Source} Software \emph{IdentityServer4}\footnote{IdentityServer4 s. \url{https://github.com/IdentityServer/IdentityServer4}} verwendet. 
 \newline
 \newline
 Der Server kann einfach in eine \emph{.Net-Core} Applikation integriert und dann konfiguriert werden. Die Konfiguration erfolgte in der Beispielanwendung direkt im Code, doch es werden auch viele verschiedene Datenbanken unterstützt.
 \subsection*{Konfiguration - Clients}
-Um externe Benutzerauthentifizierung durchführen zu können, muss die externe Anwendung zuerst angelegt und konfiguriert werden. Dies ist notwendig, da verschiedene Anwendungen, verschiedene Konfigurationen verwenden können. Folgende Einstellungen müssen gesetzt werden:
+Um externe Benutzer authentifizieren zu können, muss die Anwendung zuerst angelegt und konfiguriert werden.
+Folgende Einstellungen müssen gesetzt werden:
 \begin{itemize}
-\item ClientId: Eindeutige ID des Clients, um die das Profil später zuordnen zu können.
-\item AllowedGrantTypes: Definiert die verschiedenen OAuth Methoden zur Authentifizierung. Im Beispiel wird \emph{AuthorizationCode} verwendet.
+\item ClientId: Eindeutige ID des Clients, um das Profil später zuordnen zu können.
+\item AllowedGrantTypes: Definiert die verschiedenen OAuth-Methoden zur Authentifizierung. Im Beispiel wird \emph{AuthorizationCode} verwendet.
 \item ClientSecrets: Zusätzliches Geheimnis, welches der Client mitschicken muss.
-\item AllowedScopes: \emph{Scopes}, welche für diesen Client zugelassen werden. Diese definieren, welche \emph{Claims} der Client später abfragen kann.
-\item RedirectUris: URL auf die nach erfolgreicher Authentifizierung umgeleitet wird. Diese muss auch der Client mitschicken und muss zusammenpassen.
+\item AllowedScopes: \emph{Scopes}, welche für diesen Client zugelassen werden. Diese definieren welche \emph{Claims} der Client später abfragen kann.
+\item RedirectUris: URL auf die nach erfolgreicher Authentifizierung umgeleitet wird. Diese muss auch der Client mitschicken und zusammenpassen.
 \end{itemize}
 
 \subsection*{Konfiguration - Benutzer}
-Für die Authentifizierung werden auch Benutzer benötigt, welche im Beispiel direkt im Code angelegt werden. Jeder Benutzer kann verschiedene \emph{Claims} besitzen, welche dann abgefragt werden können. Eine Besonderheit in der Beispielanwendung ist das Zusammenspiel zwischen \emph{.Net IdentityServer} und \emph{Spring-Security}, da hier ein spezielles \emph{Claim} verwendet wird um die Rolle direkt an die Web-Anwendung zu übergeben. Im folgenden Codeausschnitt sieht man, dass neben dem Namen und der Email-Adresse auch \emph{Authorities} gesetzt wird. Dieses Property wird dann von \emph{Spring-Security} als Rolle interpretiert.
+Für die Authentifizierung werden auch Benutzer benötigt, welche im Beispiel direkt im Code angelegt werden. Jeder Benutzer kann verschiedene \emph{Claims} besitzen, welche dann abgefragt werden können. Eine Besonderheit in der Beispielanwendung ist das Zusammenspiel zwischen \emph{.Net IdentityServer} und \emph{Spring-Security}, da hier ein spezielles \emph{Claim} verwendet wird, um die Rolle direkt an die Web-Anwendung zu übergeben. Im folgenden Codeausschnitt sieht man, dass neben dem Namen und der Email-Adresse auch das Property \emph{Authorities} gesetzt wird. Dieses wird dann von \emph{Spring-Security} als Rolle interpretiert.
 
 \begin{minted}{CSharp}
 new TestUser {
@@ -37,10 +38,10 @@ new TestUser {
 \end{minted}
 
 \section{OAuth Spring Boot Demo Anwendung}
-Es wurde eine Spring-Boot Anwendung implementiert, die \emph{OAuth} Authentifizierungen über \emph{Facebook} und über IdentityServer-4, einen \emph{Authorization Server} in \emph{.Net-Core} verwendet. Es werden auch als \emph{Open Source} \emph{Authorization Server} angeboten wie z.B. \href{http://www.keycloak.org/}{\emph{Keycloak}} von der \emph{Apache Software Foundation}, der in Java und AngularJS implementiert ist. 
+Es wurde eine Spring-Boot-Anwendung implementiert, die \emph{OAuth}-Authentifizierungen über \emph{Facebook} und über IdentityServer-4, einen \emph{Authorization Server} in \emph{.Net-Core} verwendet. Es werden auch andere \emph{Open Source} \emph{Authorization Server} angeboten wie z.B. \href{http://www.keycloak.org/}{\emph{Keycloak}} von der \emph{Apache Software Foundation}, welcher in Java und AngularJS implementiert ist. 
 \newline
 \newline
-Die \emph{Spring Security} kann vollständig transparent von der eigentlichen Anwendung konfiguriert werden. Die geschützten Ressourcen können gebündelt in einer Konfigurationsklasse definiert werden, ohne dass die Implementierungen der eigentlichen Anwendung geändert müssen. Als Benutzerrepräsentation sollte eine eigene Klasse implementiert werden die \emph{Security}-spezifische Implementierung von der Anwendung abstrahiert, damit kann die gewählte Authentifizierungsmethode in Hintergrund ausgetauscht werden.
+\emph{Spring Security} kann vollständig transparent von der eigentlichen Anwendung konfiguriert werden. Die geschützten Ressourcen können gebündelt in einer Konfigurationsklasse definiert werden, ohne dass die Implementierungen der eigentlichen Anwendung geändert muss. Als Benutzerrepräsentation sollte eine eigene Klasse implementiert werden, die die \emph{Security}-spezifische Implementierung von der Anwendung abstrahiert, damit kann die gewählte Authentifizierungsmethode im Hintergrund ausgetauscht werden.
 
 \begin{code}
 	\caption{Spring application.properties}
@@ -49,10 +50,10 @@ Die \emph{Spring Security} kann vollständig transparent von der eigentlichen An
 \end{code}
 \ \newline
 \newline
-In der Datei \emph{application.properties} werden die verwendeten \emph{OAuth Authentication Server} konfiguriert, jedoch nicht die geschützten Ressourcen, diese werden in einer Spring Konfigurationsklasse definiert.
+In der Datei \emph{application.properties} werden die verwendeten \emph{OAuth-Authentication-Server} konfiguriert, jedoch nicht die geschützten Ressourcen. Diese werden in einer Spring-Konfigurationsklasse definiert.
 \newpage
 
-Diese Methode ist Teil der programmatischen Konfiguration der \emph{Spring Security} der Klasse \emph{SecurityConfiguration} und konfiguriert die \emph{HttpSecurity} Instanz.
+Diese Methode ist Teil der programmatischen Konfiguration von \emph{Spring Security} der Klasse \emph{SecurityConfiguration} und konfiguriert die \emph{HttpSecurity} Instanz.
 \begin{minted}{java}
 /**
 * Configure the htt security for the spring application
@@ -105,7 +106,7 @@ public FilterRegistrationBean
 \end{minted}
 \ \newpage
 
-Die folgende Methode konfiguriert einen \emph{CompositeFilter}, der mehrere Filter Instanzen verwaltet und als ein Filter registriert wird. In unserer Implementierung werden die OAuth-Authentifizierung über \emph{Facebook} und unseren \emph{Identity Server} unterstützt.
+Die folgende Methode konfiguriert einen \emph{CompositeFilter}, der mehrere Filter-Instanzen verwaltet und als einen registriert wird. In unserer Implementierung werden die OAuth-Authentifizierung über \emph{Facebook} und unseren \emph{Identity Server} unterstützt.
 \begin{minted}{java}
    /**
 * Helper method for configuring the BasicAuthentication filter instance.
@@ -189,10 +190,10 @@ public ResourceServerProperties identityserverResource() {
 }
 \end{minted}
 \ \newline
-Mit dieser Konfiguration ist die \emph{Security} der implementierten \emph{Spring Boot} Anwendung konfiguriert und die Ressourcen der Anwendung sind gemäß der Konfiguration geschützt.
+Mit dieser Konfiguration ist die \emph{Security} der implementierten \emph{Spring-Boot}-Anwendung konfiguriert und die Ressourcen der Anwendung sind gemäß der Konfiguration geschützt.
 \newpage
 
-Die Klasse \emph{UserContext} repräsentiert einen Benutzer, der mit der Anwendung interagiert. Dadurch werden die \emph{Spring Security} Spezifika von der Anwendung abstrahiert. Die \emph{Views} und die \emph{Controller} arbeiten mit dem \emph{UserContext}-Objekt und nicht mit dem \emph{Authentication} oder \emph{Principal} Objekten, die mehr Informationen zur Verfügung stellen, als meiner Meinung nach für die Anwendung zugänglich sein sollte.
+Die Klasse \emph{UserContext} repräsentiert einen Benutzer, der mit der Anwendung interagiert. Dadurch werden die \emph{Spring-Security}-Spezifika von der Anwendung abstrahiert. Die \emph{Views} und die \emph{Controller} arbeiten mit dem \emph{UserContext}-Objekt und nicht mit dem \emph{Authentication} oder \emph{Principal}-Objekten, die mehr Informationen zur Verfügung stellen, als meiner Meinung nach für die Anwendung zugänglich sein sollte.
 \newline\newline
 Die Klasse \emph{UserContext} könnte noch zusätzlich benutzer- und anwendungsspezifische Informationen enthalten, die unabhängig von der \emph{Security} sind.  
 
@@ -241,7 +242,7 @@ public class UserContext {
 }
 \end{minted}
 
-Die Klasse \emph{SecurityUtil} ist für die Erstellung des \emph{UserContext} aus einem \emph{Authentication} Objekt verantwortlich. Sollte ein Benutzer nicht eingeloggt sein, so wird er als anonymer Benutzer angesehen. Sollte ein Benutzer mehrere Rollen zugewiesen haben, dann wird die Rolle mit den höchsten Privilegien bevorzugt.
+Die Klasse \emph{SecurityUtil} ist für die Erstellung des \emph{UserContext} aus einem \emph{Authentication}-Objekt verantwortlich. Sollte ein Benutzer nicht eingeloggt sein, so wird er als anonymer Benutzer angesehen. Sollte ein Benutzer mehrere Rollen zugewiesen haben, dann wird die Rolle mit den höchsten Privilegien bevorzugt.
 
 \begin{minted}{java}
 /**
@@ -289,7 +290,7 @@ public static final UserContext createUserCtx(final Authentication auth) {
 \end{minted}
 \ \newpage
 
-Die folgende abstrakte Klasse repräsentiert die Basisklasse aller \emph{Controller} und stellt eine \emph{@ModelAttribute} annotierte Methode zur Verfügung, die den \emph{UserContext} für die \emph{Views} bereitstellt, der aus dem \emph{Authentication}-Objekt erstellt wird. Somit können alle \emph{Views} denselben Namen verwenden und es gibt nur eine Stelle wo der \emph{UserContext} erstellt wird. Mit Diesem Ansatz bleiben die \emph{Controller} befreit von \emph{Security}-spezifischen \emph{Code}.
+Die folgende abstrakte Klasse repräsentiert die Basisklasse aller \emph{Controller} und stellt eine \emph{@ModelAttribute} annotierte Methode zur Verfügung, die den \emph{UserContext} für die \emph{Views} bereitstellt, der aus dem \emph{Authentication}-Objekt erstellt wird. Somit können alle \emph{Views} denselben Namen verwenden und es gibt nur eine Stelle, wo der \emph{UserContext} erstellt wird. Mit Diesem Ansatz bleiben die \emph{Controller} befreit von \emph{Security}-spezifischen \emph{Code}.
 
 \begin{minted}{java}
 /**
