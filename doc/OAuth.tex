@@ -1,5 +1,11 @@
-\section{OAuth Authorization Server}
-Um Benutzerauthentifierung über OAuth durchzuführen, wird ein Authorization Server benötigt, welche die Benutzerdaten bzw. \emph{Claims} zur Verfügung stellt. In diesem Beispiel wurde die \emph{Open Source} Software \emph{IdentityServer4}\footnote{IdentityServer4 s. \url{https://github.com/IdentityServer/IdentityServer4}} verwendet. 
+\section{Beschreibung der Anwendung}
+Die erstellte Beispielanwendung besteht im wesentlichen aus einer Spring-Boot-Webanwendung, welche sowohl Facebook, als auch IdentityServer-4 zur Benutzerverwaltung verwendet. Dabei werden alle Benutzer über Facebook als normale Benutzer behandelt. Benutzer, welche sich über den IdentityServer-4 einloggen, können sowohl Administrator als auch normaler Benutzer sein. 
+
+\section{Facebook Authentication}
+Um Facebook als Provider zu verwenden, muss eine Applikation im Facebook-Developer-Portal\footnote{\url{developers.facebook.com}} angelegt werden. Dadurch bekommt man dann die benötigten Parameter welche dann in der Spring-Boot-Anwendung verwendet werden können.
+
+\section{OAuth-2 Authentication Server}
+Um Benutzerauthentifierung über OAuth durchzuführen, wird ein Authorization Server benötigt, welcher die Benutzerdaten bzw. \emph{Claims} zur Verfügung stellt. In diesem Beispiel wurde die \emph{Open Source} Software \emph{IdentityServer4}\footnote{IdentityServer4 s. \url{https://github.com/IdentityServer/IdentityServer4}} verwendet. 
 \newline
 \newline
 Der Server kann einfach in eine \emph{.Net-Core} Applikation integriert und dann konfiguriert werden. Die Konfiguration erfolgte in der Beispielanwendung direkt im Code, doch es werden auch viele verschiedene Datenbanken unterstützt.
