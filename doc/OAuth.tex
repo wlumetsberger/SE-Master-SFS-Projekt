@@ -1,5 +1,37 @@
-\section{OAuth Spring Boot}
-Es wurde eine Spring-Boot Anwendung implementiert, die \emph{OAuth} Authentifizierungen über \emph{Facebook} und über einen eigens implementierten \emph{Authorization Server} in \emph{.Net  (Identity Foundation)}. Es werden auch als \emph{Open Source} \emph{Authorization Server} angeboten wie z.B. \href{http://www.keycloak.org/}{\emph{Keycloak}} von der \emph{Apache Software Foundation}, der in Java und AngularJS implementiert ist. 
+\section{OAuth Authorization Server}
+Um Benutzerauthentifierung über OAuth durchzuführen, wird ein Authorization Server benötigt, welche die Benutzerdaten bzw. \emph{Claims} zur Verfügung stellt. In diesem Beispiel wurde die \emph{Open Source} Software \emph{IdentityServer4}\footnote{IdentityServer4 s. \url{https://github.com/IdentityServer/IdentityServer4}} verwendet. 
+\newline
+\newline
+Der Server kann einfach in eine \emph{.Net-Core} Applikation integriert und dann konfiguriert werden. Die Konfiguration erfolgte in der Beispielanwendung direkt im Code, doch es werden auch viele verschiedene Datenbanken unterstützt.
+\subsection*{Konfiguration - Clients}
+Um externe Benutzerauthentifizierung durchführen zu können, muss die externe Anwendung zuerst angelegt und konfiguriert werden. Dies ist notwendig, da verschiedene Anwendungen, verschiedene Konfigurationen verwenden können. Folgende Einstellungen müssen gesetzt werden:
+\begin{itemize}
+\item ClientId: Eindeutige ID des Clients, um die das Profil später zuordnen zu können.
+\item AllowedGrantTypes: Definiert die verschiedenen OAuth Methoden zur Authentifizierung. Im Beispiel wird \emph{AuthorizationCode} verwendet.
+\item ClientSecrets: Zusätzliches Geheimnis, welches der Client mitschicken muss.
+\item AllowedScopes: \emph{Scopes}, welche für diesen Client zugelassen werden. Diese definieren, welche \emph{Claims} der Client später abfragen kann.
+\item RedirectUris: URL auf die nach erfolgreicher Authentifizierung umgeleitet wird. Diese muss auch der Client mitschicken und muss zusammenpassen.
+\end{itemize}
+
+\subsection*{Konfiguration - Benutzer}
+Für die Authentifizierung werden auch Benutzer benötigt, welche im Beispiel direkt im Code angelegt werden. Jeder Benutzer kann verschiedene \emph{Claims} besitzen, welche dann abgefragt werden können. Eine Besonderheit in der Beispielanwendung ist das Zusammenspiel zwischen \emph{.Net IdentityServer} und \emph{Spring-Security}, da hier ein spezielles \emph{Claim} verwendet wird um die Rolle direkt an die Web-Anwendung zu übergeben. Im folgenden Codeausschnitt sieht man, dass neben dem Namen und der Email-Adresse auch \emph{Authorities} gesetzt wird. Dieses Property wird dann von \emph{Spring-Security} als Rolle interpretiert.
+
+\begin{minted}{CSharp}
+new TestUser {
+	SubjectId = "5BE86359-073C-434B-AD2D-A3932222DABE",
+	Username = "test",
+	Password = "test",
+	Claims = new List<Claim> {
+			new Claim(JwtClaimTypes.Name, "test user"),
+			new Claim(JwtClaimTypes.Email, "test@sfs.com"),
+			//Spring security role
+			new Claim("authorities", "ROLE_USER"),
+			
+	}
+\end{minted}
+
+\section{OAuth Spring Boot Demo Anwendung}
+Es wurde eine Spring-Boot Anwendung implementiert, die \emph{OAuth} Authentifizierungen über \emph{Facebook} und über IdentityServer-4, einen \emph{Authorization Server} in \emph{.Net-Core} verwendet. Es werden auch als \emph{Open Source} \emph{Authorization Server} angeboten wie z.B. \href{http://www.keycloak.org/}{\emph{Keycloak}} von der \emph{Apache Software Foundation}, der in Java und AngularJS implementiert ist. 
 \newline
 \newline
 Die \emph{Spring Security} kann vollständig transparent von der eigentlichen Anwendung konfiguriert werden. Die geschützten Ressourcen können gebündelt in einer Konfigurationsklasse definiert werden, ohne dass die Implementierungen der eigentlichen Anwendung geändert müssen. Als Benutzerrepräsentation sollte eine eigene Klasse implementiert werden die \emph{Security}-spezifische Implementierung von der Anwendung abstrahiert, damit kann die gewählte Authentifizierungsmethode in Hintergrund ausgetauscht werden.
