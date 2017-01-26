@@ -41,10 +41,17 @@ public class SessionStorage implements Serializable {
         }
     }
 
+    public ProjectModel getByKey(String name){
+        return data.stream().filter(m -> m.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+
+    }
+
     public void add(ProjectModel model) {
         Objects.requireNonNull(model, "Model must no be null");
         if (!isSaved(model)) {
             data.add(model);
+        }else{
+            data.stream().filter(m -> m.getName().equalsIgnoreCase(model.getName())).findFirst().get().setDescription(model.getDescription());
         }
     }
 

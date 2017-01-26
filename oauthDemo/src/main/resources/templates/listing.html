@@ -4,9 +4,9 @@
 
 <body>
 <div id="wrapper">
+    <div th:replace="fragments/main :: navigation"></div>
     <div id="page-wrapper">
         <div class="container-fluid">
-            <nav th:include="fragments/main::navigation"></nav>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -18,12 +18,21 @@
                 <tbody>
                 <tr th:each="project : ${projects}">
                     <td th:text="${project.name}"></td>
-                    <td th:text="${project.name}"></td>
-                    <td>
+                    <td th:text="${project.description}"></td>
+                    <td><div class="row">
+                        <div class="col-sm-1">
                         <form th:method="post" th:action="@{/admin/delete}" th:if="${utx.admin}">
                             <input type="hidden" id="name" th:name="name" th:value="${project.name}"/>
-                            <button type="submit" name="submit" class="btn btn-primary">Delete</button>
+                            <button type="submit" name="submit" class="btn btn-danger btn-circle btn-delete"><i class="fa fa-times"></i></button>
                         </form>
+                        </div>
+                        <div class="col-sm-1">
+                        <form th:method="post" th:action="@{/admin/edit}" th:if="${utx.admin}">
+                            <input type="hidden" id="edit" th:name="name" th:value="${project.name}"/>
+                            <button type="submit" name="submit" class="btn btn-success btn-circle btn-edit"><i class="fa fa-edit"></i></button>
+                        </form>
+                        </div>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

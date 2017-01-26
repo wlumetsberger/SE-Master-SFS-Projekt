@@ -4,36 +4,20 @@
 
 <body>
 <div id="wrapper">
+    <div th:replace="fragments/main :: navigation"></div>
     <div id="page-wrapper">
         <div class="container-fluid">
-            <nav th:include="fragments/main::navigation"></nav>
-            <form style="display:inline-block" th:action="@{/search}" th:object="${searchOptions}" method="get">
-                <div class="form-group row">
-                    <label for="projects" class="col-2 col-form-label">Name</label>
-                    <div class="col-10">
-                        <select id="projects">
-                            <option th:each="project : ${projects}"
-                                    th:value="${project.name}" th:text="${project.description}"></option>
-                        </select>
-                    </div>
-                </div>
-            </form>
             <form th:action="@{/admin/create}" th:role="form" th:method="post" th:object="${model}">
-                <div class="form-group row">
-                    <label for="projects" class="col-2 col-form-label">Name</label>
-                    <div class="col-10">
-                    </div>
-                </div>
                 <div class="form-group row">
                     <label for="name" class="col-2 col-form-label">Name</label>
                     <div class="col-10">
-                        <input th:field="*{name}" class="form-control" type="text" placeholder="projectname" id="name" th:name="name" th:required="true"/>
+                        <input th:field="*{name}" class="form-control" type="text" placeholder="Project Name" id="name" th:name="name" th:required="true" th:readonly="${edit}"/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="description" class="col-2 col-form-label">Description</label>
                     <div class="col-10">
-                        <input th:field="*{description}" class="form-control" type="text" placeholder="projectname" id="description" th:required="true"/>
+                        <input th:field="*{description}" class="form-control" type="text" placeholder="Project Description" id="description" th:required="true"/>
                     </div>
                 </div>
                 <div class="form-group row">
